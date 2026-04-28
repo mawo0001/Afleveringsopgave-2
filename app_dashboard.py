@@ -5,6 +5,16 @@ app = Flask(__name__)
 
 @app.route("/")
 def dashboard():
+    # Simpel landing page først - ingen database-forbindelse
+    return """
+    <h1>Vindmølle Overvågningssystem</h1>
+    <p>Systemet er startet og kører.</p>
+    <p><a href="/data">Se telemetri data</a></p>
+    <p><a href="/test-db">Test database forbindelse</a></p>
+    """
+
+@app.route("/data")
+def data_dashboard():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -37,9 +47,34 @@ def dashboard():
         return render_template("index.html", readings=readings_data, anomalies=anomalies_data)
 
     except Exception as e:
-        # Hvis databasen mangler en kolonne (f.eks. turbine_speed), vil fejlen vises her
-        return f"Der skete en fejl i dashboardet: {e}"
+        # Hvis databasen ikke er tilgængelig, vis en fejl-side
+        error_msg = f"""
+        <h1>Database-forbindelsesfejl</h1>
+        <p>Kan ikke oprette forbindelse til Azure SQL-database.</p>
+        <p>Fejl: {str(e)}</p>
+        <h2>Mulige løsninger:</h2>
+        <ul>
+            <li>Tjek at AZURE_SQL_PASSWORD er sat korrekt i .env.local</li>
+            <li>Tjek Azure SQL firewall-regler - tillad din IP eller "Allow Azure services"</li>
+            <li>Kontakt administrator for database-adgang</li>
+        </ul>
+        <p><a href="/">Tilbage til forsiden</a></p>
+        """
+        return error_msg
+
+@app.route("/test-db")
+def test_db():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 as test")
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return f"<h1>Database OK</h1><p>Test forespørgsel lykkedes: {result}</p><p><a href='/'>Tilbage</a></p>"
+    except Exception as e:
+        return f"<h1>Database Fejl</h1><p>{str(e)}</p><p><a href='/'>Tilbage</a></p>"
 
 if __name__ == "__main__":
-    print("Dashboardet kører! Gå til http://127.0.0.1:8080")
-    app.run(port=8080, debug=True)
+    print("Dashboardet kører! Gå til http://0.0.0.0:8080")
+    app.run(host="0.0.0.0", port=8080, debug=True)

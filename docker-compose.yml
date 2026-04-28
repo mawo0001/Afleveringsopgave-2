@@ -1,12 +1,35 @@
 services:
-  app:
+  telemetry:
     build: .
     env_file:
       - .env.local
     ports:
-      - "8080:8080"
-      - "5050:5050"
-      - "5051:5051"
+      - "25050:5050"
+    command: ["python3", "telemetry_sensor.py"]
+
+  monitoring:
+    build: .
+    env_file:
+      - .env.local
+    ports:
+      - "25051:5051"
+    command: ["python3", "monitoring_alerting.py"]
+
+  dashboard:
+    build: .
+    env_file:
+      - .env.local
+    ports:
+      - "28080:8080"
     volumes:
-      - ./:/app
-    command: ["python3", "main.py"]
+      - ./templates:/app/templates
+    command: ["python3", "app_dashboard.py"]
+
+  simulator:
+    build: .
+    env_file:
+      - .env.local
+    depends_on:
+      - telemetry
+      - monitoring
+    command: ["python3", "simulator.py"]

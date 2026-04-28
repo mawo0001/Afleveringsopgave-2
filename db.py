@@ -9,9 +9,9 @@ except ImportError as e:
 
 
 def get_db_connection():
-    server = "tcp:vindmollebackend.database.windows.net,1433"
-    database = "free-sql-db-0038751"
-    username = os.getenv("AZURE_SQL_USER", "CloudSA74c0e4f9")
+    server = "stud.ek.dk"
+    database = "akse3585"
+    username = os.getenv("AZURE_SQL_USER", "akse3585@stud.ek.dk")
     password = os.getenv("AZURE_SQL_PASSWORD")
     if not password:
         raise RuntimeError(
@@ -25,7 +25,7 @@ def get_db_connection():
         f"DATABASE={database};"
         f"UID={username};"
         f"PWD={password};"
-        "Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+        "Encrypt=yes;TrustServerCertificate=no;Connection Timeout=5;"
     )
 
     return pyodbc.connect(connection_string)
