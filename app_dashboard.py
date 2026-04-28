@@ -7,8 +7,7 @@ app = Flask(__name__)
 def dashboard():
     try:
         conn = get_db_connection()
-        # dictionary=True gør, at vi kan tilgå data som rækker (f.eks. row['name'])
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
         
         # 1. HENT TELEMETRI (Målinger + Lokation)
         # Vi bruger en JOIN for at koble 'readings' sammen med 'sensors' via sensor_id
@@ -21,13 +20,15 @@ def dashboard():
             ORDER BY r.timestamp DESC LIMIT 15
         """
         cursor.execute(query_readings)
-        readings_data = cursor.fetchall()
+        columns = [column[0] for column in cursor.description]
+        readings_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
         
         # 2. HENT ALARMER (Anomalier)
         # Her henter vi beskrivelsen og scoren på fejlene
         query_anomalies = "SELECT * FROM anomalies ORDER BY timestamp DESC LIMIT 10"
         cursor.execute(query_anomalies)
-        anomalies_data = cursor.fetchall()
+        columns = [column[0] for column in cursor.description]
+        anomalies_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
         
         cursor.close()
         conn.close()

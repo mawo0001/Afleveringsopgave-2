@@ -14,7 +14,7 @@ def create_anomaly():
     
     # Gem anomalien i databasen
     cursor.execute(
-        "INSERT INTO anomalies (sensor_id, description, severity_score) VALUES (%s, %s, %s)",
+        "INSERT INTO anomalies (sensor_id, description, severity_score) VALUES (?, ?, ?)",
         (data["sensor_id"], data["description"], data["severity_score"])
     )
     

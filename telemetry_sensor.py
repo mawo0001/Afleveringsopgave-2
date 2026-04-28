@@ -27,7 +27,7 @@ def receive_reading():
         # Gem alt i databasen inkl. de nye felter
         query = """
             INSERT INTO readings (sensor_id, value, unit, turbine_speed, severity, recommended_action) 
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES (?, ?, ?, ?, ?, ?)
         """
         cursor.execute(query, (data["id"], val, data["unit"], data.get("turbine_speed", 0), sev, act))
         
