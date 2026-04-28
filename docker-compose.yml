@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    env_file:
+      - .env.local
+    ports:
+      - "8080:8080"
+      - "5050:5050"
+      - "5051:5051"
+    volumes:
+      - ./:/app
+    command: ["python3", "main.py"]

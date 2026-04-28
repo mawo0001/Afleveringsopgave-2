@@ -1,0 +1,19 @@
+app:
+  name: vindmolle-overvaagning
+  description: "Configuration template for local and remote environments."
+
+environment:
+  local:
+    description: "Local development settings"
+    env_file: .env.local
+  remote:
+    description: "Remote deployment settings"
+    env_file: .env.remote
+
+database:
+  azure_sql:
+    server: "tcp:vindmollebackend.database.windows.net,1433"
+    database: "free-sql-db-0038751"
+    username: "CloudSA74c0e4f9"
+    password_env: "AZURE_SQL_PASSWORD"
+    driver: "ODBC Driver 18 for SQL Server"
