@@ -3,8 +3,8 @@ import time
 import random
 
 # Adresserne på dine to Flask-services
-TELEMETRY_URL = "http://127.0.0.1:5050/reading"
-ALARM_URL = "http://127.0.0.1:5051/anomaly"
+TELEMETRY_URL = "http://telemetry_sensor:5050/reading"
+ALARM_URL = "http://monitoring_alerting:5051/anomaly"
 
 # Definition af vores test-møller
 turbines = [
