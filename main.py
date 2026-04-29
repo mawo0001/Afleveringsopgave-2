@@ -1,46 +1,49 @@
 import subprocess
 import time
 import sys
+from init_db import init_db
 
 def start_system():
     print("🏗️  Starter Vindmølle Overvågningssystemet...")
-    
+
+    # Initialiser databasen før alt andet
+    print("🗄️  Initialiserer database...")
+    init_db()
+
     processes = []
-    
-    # Liste over alle dine scripts
+
     scripts = [
-        "telemetry_sensor.py",   # Port 5050
+        "telemetry_sensor.py",    # Port 5050
         "monitoring_alerting.py", # Port 5051
-        "app_dashboard.py"       # Port 8080
+        "app_dashboard.py"        # Port 8080
     ]
 
     try:
-        # 1. Start alle server-services først
         for script in scripts:
             print(f"🚀 Starter {script}...")
             proc = subprocess.Popen([sys.executable, script])
             processes.append(proc)
-            time.sleep(2)  # Vent lidt så portene når at åbne
+            time.sleep(2)
 
         print("\n🖥️  Alle servere kører!")
-        print("🔗 Dashboard: http://127.0.0.1:8080")
+        print("🔗 Dashboard:          http://127.0.0.1:8080")
+        print("🔗 Telemetri API:      http://127.0.0.1:5050/reading")
+        print("🔗 Monitoring API:     http://127.0.0.1:5051/anomaly")
         print("------------------------------------------")
 
-        # 2. Start simulatoren sidst
-        print("⚙️  Starter simulatoren (Data-generering)...")
+        print("⚙️  Starter simulatoren (data-generering)...")
         sim_proc = subprocess.Popen([sys.executable, "simulator.py"])
         processes.append(sim_proc)
 
-        print("\n✅ SYSTEMET KØRER. Tryk Ctrl+C for at lukke alt på én gang.\n")
+        print("\n✅ SYSTEMET KØRER. Tryk Ctrl+C for at lukke alt.\n")
 
-        # Hold main.py kørende så længe processerne lever
         while True:
             time.sleep(1)
 
     except KeyboardInterrupt:
         print("\n\n🛑 Lukker systemet ned...")
         for proc in processes:
-            proc.terminate() # Dræber hver enkelt proces pænt
+            proc.terminate()
         print("👋 Alt er lukket. Vi ses!")
 
 if __name__ == "__main__":

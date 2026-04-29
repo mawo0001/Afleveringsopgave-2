@@ -1,0 +1,62 @@
+name: CI – Vindmølle Overvågning
+
+on:
+  push:
+    branches: ["main", "ttest-branch"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: vindmolle
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: vindmolle
+      DB_USER: admin
+      DB_PASSWORD: secret
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Sæt Python op
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer afhængigheder
+        run: pip install -r requirements.txt pytest
+
+      - name: Initialiser database
+        run: python init_db.py
+
+      - name: Kør tests
+        run: pytest tests/ -v
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Byg Docker image
+        run: docker build -t vindmolle-app .

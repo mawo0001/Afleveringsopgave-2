@@ -1,31 +1,14 @@
 import os
-
-try:
-    import pyodbc
-except ImportError as e:
-    raise ImportError(
-        "pyodbc is required for Azure SQL connection. Install it with 'pip install pyodbc'."
-    ) from e
-
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 def get_db_connection():
-    server = "tcp:vindmollebackend.database.windows.net,1433"
-    database = "free-sql-db-0038751"
-    username = os.getenv("AZURE_SQL_USER", "CloudSA74c0e4f9")
-    password = os.getenv("AZURE_SQL_PASSWORD")
-    if not password:
-        raise RuntimeError(
-            "Please set AZURE_SQL_PASSWORD environment variable with your Azure SQL password"
-        )
-    driver = os.getenv("ODBC_DRIVER", "ODBC Driver 18 for SQL Server")
-
-    connection_string = (
-        f"DRIVER={{{driver}}};"
-        f"SERVER={server};"
-        f"DATABASE={database};"
-        f"UID={username};"
-        f"PWD={password};"
-        "Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+    conn = psycopg2.connect(
+        host=os.getenv("DB_HOST", "db"),
+        port=os.getenv("DB_PORT", "5432"),
+        dbname=os.getenv("DB_NAME", "vindmolle"),
+        user=os.getenv("DB_USER", "admin"),
+        password=os.getenv("DB_PASSWORD", "secret"),
+        cursor_factory=RealDictCursor
     )
-
-    return pyodbc.connect(connection_string)
+    return conn

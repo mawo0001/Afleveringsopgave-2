@@ -27,7 +27,7 @@ def receive_reading():
         # Gem alt i databasen inkl. de nye felter
         query = """
             INSERT INTO readings (sensor_id, value, unit, turbine_speed, severity, recommended_action) 
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
         cursor.execute(query, (data["id"], val, data["unit"], data.get("turbine_speed", 0), sev, act))
         
@@ -42,4 +42,4 @@ def receive_reading():
         return jsonify({"status": "Fejl", "error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(port=5050, debug=True)
+    app.run(host="0.0.0.0", port=5050, debug=True)

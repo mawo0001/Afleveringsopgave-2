@@ -14,7 +14,7 @@ def create_anomaly():
     
     # Gem anomalien i databasen
     cursor.execute(
-        "INSERT INTO anomalies (sensor_id, description, severity_score) VALUES (?, ?, ?)",
+        "INSERT INTO anomalies (sensor_id, description, severity_score) VALUES (%s, %s, %s)",
         (data["sensor_id"], data["description"], data["severity_score"])
     )
     
@@ -26,4 +26,4 @@ def create_anomaly():
     return jsonify({"status": "Anomali logget i database", "asset_health": health})
 
 if __name__ == "__main__":
-    app.run(port=5051, debug=True)
+    app.run(host="0.0.0.0", port=5051, debug=True)

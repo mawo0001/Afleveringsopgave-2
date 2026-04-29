@@ -9,8 +9,6 @@ def dashboard():
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # 1. HENT TELEMETRI (Målinger + Lokation)
-        # Vi bruger en JOIN for at koble 'readings' sammen med 'sensors' via sensor_id
         query_readings = """
             SELECT 
                 s.name, s.location, r.value, r.unit, r.turbine_speed, 
@@ -20,26 +18,25 @@ def dashboard():
             ORDER BY r.timestamp DESC LIMIT 15
         """
         cursor.execute(query_readings)
-        columns = [column[0] for column in cursor.description]
-        readings_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        readings_data = []
+        for row in cursor.fetchall():
+            r = dict(row)
+            r['value'] = float(r['value'])
+            r['turbine_speed'] = float(r['turbine_speed']) if r['turbine_speed'] else 0.0
+            readings_data.append(r)
         
-        # 2. HENT ALARMER (Anomalier)
-        # Her henter vi beskrivelsen og scoren på fejlene
         query_anomalies = "SELECT * FROM anomalies ORDER BY timestamp DESC LIMIT 10"
         cursor.execute(query_anomalies)
-        columns = [column[0] for column in cursor.description]
-        anomalies_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        anomalies_data = [dict(row) for row in cursor.fetchall()]
         
         cursor.close()
         conn.close()
         
-        # Vi sender begge bunker data til vores HTML-skabelon
         return render_template("index.html", readings=readings_data, anomalies=anomalies_data)
 
     except Exception as e:
-        # Hvis databasen mangler en kolonne (f.eks. turbine_speed), vil fejlen vises her
         return f"Der skete en fejl i dashboardet: {e}"
 
 if __name__ == "__main__":
     print("Dashboardet kører! Gå til http://127.0.0.1:8080")
-    app.run(port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
