@@ -1,14 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from db import get_db_connection
 
 app = Flask(__name__)
 
 @app.route("/")
 def dashboard():
-    return """
-    <h1>Vindmølle Overvågningssystem</h1>
-    <p><a href="/data">Se telemetri og alarmer</a></p>
-    """
+    return redirect("/data")
 
 @app.route("/data")
 def data_dashboard():

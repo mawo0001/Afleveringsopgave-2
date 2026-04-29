@@ -1,35 +1,87 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: windmill_postgresql
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-vindmolle_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - windmill_network
+
   telemetry:
     build: .
+    container_name: windmill_telemetry
     env_file:
       - .env.local
     ports:
-      - "25050:5050"
+      - "5050:5050"
+    depends_on:
+      postgres:
+        condition: service_healthy
     command: ["python3", "telemetry_sensor.py"]
+    networks:
+      - windmill_network
 
   monitoring:
     build: .
+    container_name: windmill_monitoring
     env_file:
       - .env.local
     ports:
-      - "25051:5051"
+      - "5051:5051"
+    depends_on:
+      postgres:
+        condition: service_healthy
     command: ["python3", "monitoring_alerting.py"]
+    networks:
+      - windmill_network
 
   dashboard:
     build: .
+    container_name: windmill_dashboard
     env_file:
       - .env.local
     ports:
-      - "28080:8080"
+      - "8080:8080"
     volumes:
       - ./templates:/app/templates
+    depends_on:
+      postgres:
+        condition: service_healthy
     command: ["python3", "app_dashboard.py"]
+    networks:
+      - windmill_network
 
   simulator:
     build: .
+    container_name: windmill_simulator
     env_file:
       - .env.local
     depends_on:
-      - telemetry
-      - monitoring
+      telemetry:
+        condition: service_started
+      monitoring:
+        condition: service_started
+      dashboard:
+        condition: service_started
     command: ["python3", "simulator.py"]
+    networks:
+      - windmill_network
+
+volumes:
+  postgres_data:
+
+networks:
+  windmill_network:
+    driver: bridge

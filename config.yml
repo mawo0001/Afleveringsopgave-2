@@ -1,19 +1,21 @@
 app:
   name: vindmolle-overvaagning
-  description: "Configuration template for local and remote environments."
+  description: "Windmill monitoring system with PostgreSQL database"
 
 environment:
-  local:
-    description: "Local development settings"
+  development:
+    description: "Local development with Docker PostgreSQL"
     env_file: .env.local
-  remote:
-    description: "Remote deployment settings"
-    env_file: .env.remote
+  production:
+    description: "Production deployment with external PostgreSQL"
+    env_file: .env.prod
 
 database:
-  azure_sql:
-    server: "tcp:vindmollebackend.database.windows.net,1433"
-    database: "free-sql-db-0038751"
-    username: "CloudSA74c0e4f9"
-    password_env: "AZURE_SQL_PASSWORD"
-    driver: "ODBC Driver 18 for SQL Server"
+  postgresql:
+    host: "${POSTGRES_HOST}"
+    port: "${POSTGRES_PORT}"
+    database: "${POSTGRES_DB}"
+    username: "${POSTGRES_USER}"
+    password: "${POSTGRES_PASSWORD}"
+    ssl: "${POSTGRES_SSL}"
+    description: "PostgreSQL database connection"

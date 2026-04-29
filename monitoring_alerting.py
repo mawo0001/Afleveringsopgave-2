@@ -13,12 +13,12 @@ def create_anomaly():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO anomalies (sensor_id, description, severity_score) VALUES (?, ?, ?)",
+            "INSERT INTO anomalies (sensor_id, description, severity_score) VALUES (%s, %s, %s)",
             (
                 data.get("sensor_id"),
                 data.get("description"),
                 data.get("severity_score"),
-            ),
+            )
         )
         conn.commit()
         cursor.close()

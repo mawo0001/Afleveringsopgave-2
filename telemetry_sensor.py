@@ -28,7 +28,7 @@ def receive_reading():
         cursor = conn.cursor()
         query = """
             INSERT INTO readings (sensor_id, value, unit, turbine_speed, severity, recommended_action)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
         cursor.execute(
             query,
@@ -39,7 +39,7 @@ def receive_reading():
                 data.get("turbine_speed", 0),
                 severity,
                 action,
-            ),
+            )
         )
         conn.commit()
         cursor.close()

@@ -1,30 +1,30 @@
 import os
 try:
-    import pyodbc
+    import psycopg2
 except ImportError as e:
     raise ImportError(
-        "pyodbc is required for Azure SQL connection. Install it with 'pip install pyodbc'."
+        "psycopg2 is required for PostgreSQL connection. Install it with 'pip install psycopg2-binary'."
     ) from e
 
 def get_db_connection():
-    server = "vindmollebackend.database.windows.net"
-    database = "free-sql-db-0038751"
-    username = os.getenv("AZURE_SQL_USER", "akse3585@stud.ek.dk")
-    password = os.getenv("AZURE_SQL_PASSWORD")
+    """Establish PostgreSQL database connection."""
+    host = os.getenv("POSTGRES_HOST", "postgresql")
+    port = os.getenv("POSTGRES_PORT", "5432")
+    database = os.getenv("POSTGRES_DB", "vindmolle_db")
+    username = os.getenv("POSTGRES_USER", "postgres")
+    password = os.getenv("POSTGRES_PASSWORD")
     
     if not password:
         raise RuntimeError(
-            "Please set AZURE_SQL_PASSWORD environment variable with your Azure SQL password"
+            "POSTGRES_PASSWORD environment variable is not set. Please set it with your PostgreSQL password."
         )
     
-    driver = os.getenv("ODBC_DRIVER", "ODBC Driver 18 for SQL Server")
-    connection_string = (
-        f"DRIVER={{{driver}}};"
-        f"SERVER={server};"
-        f"DATABASE={database};"
-        f"UID={username};"
-        f"PWD={password};"
-        "Encrypt=yes;TrustServerCertificate=no;Connection Timeout=5;"
+    connection = psycopg2.connect(
+        host=host,
+        port=port,
+        database=database,
+        user=username,
+        password=password
     )
     
-    return pyodbc.connect(connection_string)
+    return connection

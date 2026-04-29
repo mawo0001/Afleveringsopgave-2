@@ -1,6 +1,71 @@
+# Environment variables - SENSITIVE (NEVER commit!)
+.env
+.env.*
+.env.local
+.env.prod
+.env.remote
+
+# Python
 __pycache__/
 *.py[cod]
-.env
-.env.local
-.env.remote
-.venv/
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Database and volumes
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+.postgres_data/
+
+# Logs
+*.log
+logs/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
