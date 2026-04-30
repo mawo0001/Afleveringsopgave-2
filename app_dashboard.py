@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, Response
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from db import get_db_connection
 
 app = Flask(__name__)
@@ -6,6 +7,10 @@ app = Flask(__name__)
 @app.route("/")
 def dashboard():
     return redirect("/data")
+
+@app.route('/metrics')
+def metrics():
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
 @app.route("/data")
 def data_dashboard():

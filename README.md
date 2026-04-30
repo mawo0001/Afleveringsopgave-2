@@ -58,6 +58,32 @@ http://localhost:8080
 http://localhost:8080/data
 ```
 
+5. **Åbn Prometheus:**
+```
+http://localhost:9090
+```
+
+6. **Åbn Grafana:**
+```
+http://localhost:3000
+```
+Brug `admin` / `admin` første gang.
+
+## 📈 Grafana & Prometheus
+
+Løsningen inkluderer nu en fuld overvågningskæde med:
+- `prom/prometheus:latest` fra Docker Hub
+- `grafana/grafana:latest` fra Docker Hub
+
+Prometheus scraper:
+- `telemetry:5050`
+- `monitoring:5051`
+- `dashboard:8080`
+
+Grafana er auto-provisioneret med en Prometheus datasource og en enkel dashboard-skabelon til `telemetry_requests_total` og `monitoring_requests_total`.
+
+Hvis du vil se metrics i Grafana, skal du bare åbne `http://localhost:3000` og finde dashboards i venstre menu.
+
 ## 🔧 Miljøvariabler
 
 Konfigureres i `.env.local` (allerede lavet):
@@ -138,6 +164,11 @@ GET /data      # Telemetri & anomalier fra database
 
 ```bash
 docker compose down
+```
+
+For at fjerne Grafana og Prometheus data også, brug:
+```bash
+docker compose down -v
 ```
 
 For at slette database-data også:
