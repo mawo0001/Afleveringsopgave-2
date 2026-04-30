@@ -12,15 +12,13 @@ Systemet består af følgende komponenter:
 | **Telemetry API** | 5050 | Flask API til at modtage sensor-telemetri |
 | **Monitoring & Alerting** | 5051 | Flask API til at registrere anomalier |
 | **Dashboard** | 8080 | Flask web dashboard til datavisning |
-| **Simulator** | - | Genererer testdata til systemet |
 
 ## 📋 Filer
 
 - `db.py` — PostgreSQL database-forbindelsesmodul
-- `telemetry_sensor.py` — Flask API (port 5050) til að modtage måledata
+- `telemetry_sensor.py` — Flask API (port 5050) til at modtage måledata
 - `monitoring_alerting.py` — Flask API (port 5051) til at logge anomalier
 - `app_dashboard.py` — Flask dashboard (port 8080) til visualisering
-- `simulator.py` — Test-data generator der sender data videre
 - `Dockerfile` — Multi-layer container image for Python-applikation
 - `docker-compose.yml` — Orkestrer alle services med PostgreSQL
 - `config.yml` — Applikationskonfiguration
@@ -47,7 +45,7 @@ docker compose up --build
 Docker vil automatisk:
 - Starte PostgreSQL og initialisere databasen med `init-db.sql`
 - Bygge Python-image'et
-- Starte alle 5 services i korrekt rækkefølge
+- Starte alle services i korrekt rækkefølge
 - Oprette netværk for intern kommunikation
 
 3. **Åbn dashboardet:**
@@ -103,17 +101,26 @@ Alle tabeller har passende indexes for performance.
 ### Telemetry (port 5050)
 ```bash
 POST /reading
+Content-Type: application/json
 {
-  "id": 101,
+  "sensor_id": 101,
   "value": 95.5,
   "unit": "Hz",
   "turbine_speed": 18.5
 }
 ```
 
+Brug Postman eller curl til at sende testdata, for eksempel:
+```bash
+curl -X POST http://localhost:5050/reading \
+  -H "Content-Type: application/json" \
+  -d '{"sensor_id":101,"value":95.5,"unit":"Hz","turbine_speed":18.5}'
+```
+
 ### Monitoring (port 5051)
 ```bash
 POST /anomaly
+Content-Type: application/json
 {
   "sensor_id": 101,
   "description": "High vibration detected",
@@ -165,7 +172,6 @@ export POSTGRES_PASSWORD=ditt_passord
 python3 telemetry_sensor.py
 python3 monitoring_alerting.py
 python3 app_dashboard.py
-python3 simulator.py  # I en anden terminal
 ```
 
 ## 🔐 Sikkerhed

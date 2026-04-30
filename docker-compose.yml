@@ -63,22 +63,6 @@ services:
     networks:
       - windmill_network
 
-  simulator:
-    build: .
-    container_name: windmill_simulator
-    env_file:
-      - .env.local
-    depends_on:
-      telemetry:
-        condition: service_started
-      monitoring:
-        condition: service_started
-      dashboard:
-        condition: service_started
-    command: ["python3", "simulator.py"]
-    networks:
-      - windmill_network
-
 volumes:
   postgres_data:
 

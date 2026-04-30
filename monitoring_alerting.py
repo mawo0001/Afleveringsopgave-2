@@ -9,15 +9,25 @@ def create_anomaly():
     if not data:
         return jsonify({"status": "Fejl", "error": "Ingen JSON data"}), 400
 
+    sensor_id = data.get("sensor_id")
+    description = data.get("description")
+    severity_score = data.get("severity_score")
+    if sensor_id is None:
+        return jsonify({"status": "Fejl", "error": "Mangler sensor_id"}), 400
+    if description is None:
+        return jsonify({"status": "Fejl", "error": "Mangler description"}), 400
+    if severity_score is None:
+        return jsonify({"status": "Fejl", "error": "Mangler severity_score"}), 400
+
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO anomalies (sensor_id, description, severity_score) VALUES (%s, %s, %s)",
             (
-                data.get("sensor_id"),
-                data.get("description"),
-                data.get("severity_score"),
+                sensor_id,
+                description,
+                severity_score,
             )
         )
         conn.commit()

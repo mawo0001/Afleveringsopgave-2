@@ -9,7 +9,10 @@ def receive_reading():
     if not data:
         return jsonify({"status": "Fejl", "error": "Ingen JSON data"}), 400
 
+    sensor_id = data.get("sensor_id")
     value = data.get("value")
+    if sensor_id is None:
+        return jsonify({"status": "Fejl", "error": "Mangler sensor_id"}), 400
     if value is None:
         return jsonify({"status": "Fejl", "error": "Mangler value"}), 400
 
@@ -33,7 +36,7 @@ def receive_reading():
         cursor.execute(
             query,
             (
-                data.get("id"),
+                sensor_id,
                 value,
                 data.get("unit"),
                 data.get("turbine_speed", 0),
