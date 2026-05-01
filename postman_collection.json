@@ -1,0 +1,174 @@
+{
+  "info": {
+    "name": "Vindmølle Overvågningssystem - Test Suite",
+    "description": "Test collection for sending data to the Windmill Monitoring System database",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1️⃣ Send Sensor Reading (Normal)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sensor_id\": 101,\n  \"value\": 75,\n  \"unit\": \"dB\",\n  \"turbine_speed\": 45.5\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5050/reading",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5050",
+          "path": ["reading"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2️⃣ Send Sensor Reading (Warning)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sensor_id\": 102,\n  \"value\": 110,\n  \"unit\": \"dB\",\n  \"turbine_speed\": 62.3\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5050/reading",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5050",
+          "path": ["reading"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3️⃣ Send Sensor Reading (Critical)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sensor_id\": 201,\n  \"value\": 130,\n  \"unit\": \"dB\",\n  \"turbine_speed\": 85.7\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5050/reading",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5050",
+          "path": ["reading"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4️⃣ Log Anomaly (Warning Level)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sensor_id\": 101,\n  \"description\": \"Unormal vibration detected on main bearing\",\n  \"severity_score\": 6\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5051/anomaly",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5051",
+          "path": ["anomaly"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5️⃣ Log Anomaly (Critical Level)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sensor_id\": 201,\n  \"description\": \"Critical temperature spike in gearbox - immediate inspection required\",\n  \"severity_score\": 9\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5051/anomaly",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5051",
+          "path": ["anomaly"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6️⃣ View Dashboard (Verify Data Saved)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/data",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["data"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7️⃣ Check Telemetry Metrics",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5050/metrics",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5050",
+          "path": ["metrics"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "8️⃣ Check Monitoring Metrics",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5051/metrics",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5051",
+          "path": ["metrics"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
